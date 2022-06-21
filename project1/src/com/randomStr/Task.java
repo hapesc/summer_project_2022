@@ -9,14 +9,14 @@ public class Task implements Runnable {
 
     @Override
     public void run() {
-        try (FileWriter output = new FileWriter("/Users/michael-liang/Desktop/IO_Test/TestSet_F.txt",true);) {
+        try (FileWriter output = new FileWriter("/Users/michael-liang/Desktop/IO_Test/TestSet_02.txt",true)) {
 
             Random r = new Random();
             StringBuffer sb;
             String strSeed = "abcdefghijklmnopqrstuvwxyz";
-            for (long i = 0; i < 1e7; i++) {
+            for (long i = 0; i < 50000; i++) {
                 sb = new StringBuffer(16);
-                sb.append('f');
+                sb.append('a');
                 for (int j = 0; j < 14; j++) {
                     sb.append(strSeed.charAt(r.nextInt(25)));
                 }
