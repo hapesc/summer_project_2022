@@ -12,7 +12,6 @@ public class Random_str {
             t[i].start();
             t[i].join();
         }
-//        new Task().run();
         System.out.println("success");
     }
 }

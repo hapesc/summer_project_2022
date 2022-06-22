@@ -7,7 +7,7 @@ public class SortTask extends RecursiveTask<String[]> {
     /**
      * 排序数组长度的阈值
      */
-    private static final int THRESHOLD = 100;
+    private static final int THRESHOLD = 500;
 
     private static MergeSort mergeSort = new MergeSort();
     /**
