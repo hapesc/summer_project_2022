@@ -8,9 +8,11 @@ import java.nio.file.Paths;
 import java.util.concurrent.ForkJoinPool;
 
 public class BigDataSort {
-    public static void main(String[] args) throws FileNotFoundException {
-        String filePath="/Users/michael-liang/Desktop/IO_Test/TestSet_A.txt";
-        String tempPath="/Users/michael-liang/Desktop/IO_Test/TestSet_A_temp/temp";
+    public static void main(String[] args) throws IOException {
+        String filePath="/Users/michael-liang/Desktop/IO_Test/TestSet_B.txt";
+        String tempPath="/Users/michael-liang/Desktop/IO_Test/TestSet_B_temp/";
+        Files.createDirectory(Paths.get(tempPath));
+        tempPath+="temp";
         String[] FilePaths=new String[26];
         sortSingleFile(filePath,tempPath);
     }
