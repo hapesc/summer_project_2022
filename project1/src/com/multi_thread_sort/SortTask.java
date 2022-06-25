@@ -27,18 +27,22 @@ public class SortTask extends RecursiveTask<String[]> {
     @Override
     protected String[] compute() {
         if (originArray.length <= THRESHOLD) {
-            // 数组长度<+阈值，则将数组进行排序
+            // 数组长度<=阈值，则将数组进行排序
             return sortActuator.sort(originArray);
         } else {
             // 数组长度大于阈值，则继续将数组进行拆分
-            int mid = originArray.length / 2;
+//            int l1 = originArray.length / 3;
+//            int l2=(originArray.length / 3)*2;
+            int mid=originArray.length/2;
             String[] leftArray = Arrays.copyOfRange(originArray, 0, mid);
-            String[] rightArray = Arrays.copyOfRange(originArray, mid, originArray.length);
+//            String[] midArray = Arrays.copyOfRange(originArray, l1, l2);
+            String[] rightArray=Arrays.copyOfRange(originArray,mid,originArray.length);
             SortTask leftTask = new SortTask(leftArray, sortActuator);
+//            SortTask midTask=new SortTask(midArray,sortActuator);
             SortTask rightTask = new SortTask(rightArray, sortActuator);
-            invokeAll(leftTask, rightTask);
+            invokeAll(leftTask,rightTask);
             // 将拆分后的数组排序并统计结果
-            return mergeSort.merge(leftTask.join(), rightTask.join());
+            return mergeSort.merge2way(leftTask.join(), rightTask.join());
         }
     }
 }

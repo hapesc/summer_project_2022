@@ -6,11 +6,11 @@ import java.util.Random;
 
 public class Random_str {
     public static void main(String[] args) throws IOException, InterruptedException {
-        Thread t[]=new Thread[10];
-        for(int i=0;i<10;i++){
-            t[i]=new Thread(new Task());
-            t[i].start();
-            t[i].join();
+        Thread t[]=new Thread[40];
+        for(int i=1;i<=40;i++){
+            t[i-1]=new Thread(new Task(i));
+            t[i-1].start();
+            t[i-1].join();
         }
         System.out.println("success");
     }

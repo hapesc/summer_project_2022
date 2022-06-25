@@ -1,0 +1,12 @@
+Task01：
+临时文件归并
+思路：多线程二路归并
+用forkjoin or cacheThreadPool
+核心逻辑：
+将两个文件读入数组，然后merge，再输出到新的临时文件 
+若最后剩下一个文件，则对最后三个文件进行三路归并
+
+Task02：
+重构代码
+要求：将data01-40.txt排序，输出成resultA-Z.txt
+分析：每个文件1G，大概1亿行字符串，每一次归并好的数组直接按首字母写入resultA01tempXX.txt临时文件，再对resultA01-40tempXX归并

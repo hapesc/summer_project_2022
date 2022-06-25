@@ -2,12 +2,12 @@ package com.multi_thread_sort;
 
 public class MergeSort {
     /**
-     * 合并结果
+     * 改成三路归并
      *
      * @param arrayLeft
      * @param arrayRight
      */
-    public String[] merge(String[] arrayLeft, String[] arrayRight) {
+    public String[] merge2way(String[] arrayLeft,String[] arrayRight) {
         String[] result = new String[arrayLeft.length + arrayRight.length];
         for (int index = 0, lIndex = 0, rIndex = 0; index < result.length; index++) {
             if (lIndex > arrayLeft.length - 1) {
@@ -25,4 +25,68 @@ public class MergeSort {
         }
         return result;
     }
+    public String[] merge3way(String[] arrayLeft, String[] arrayMid, String[] arrayRight) {
+        String[] destArray = new String[arrayLeft.length + arrayMid.length + arrayRight.length];
+        int i = 0, j = 0, k = 0, l = 0;
+        int mid1 = arrayLeft.length, mid2 = arrayMid.length, high = arrayRight.length;
+        // choose smaller of the smallest in the three ranges
+        while ((i < mid1) && (j < mid2) && (k < high)) {
+            if (arrayLeft[i].compareTo(arrayMid[j]) < 0) {
+                if (arrayLeft[i].compareTo(arrayMid[k]) < 0)
+                    destArray[l++] = arrayLeft[i++];
+
+                else
+                    destArray[l++] = arrayRight[k++];
+            } else {
+                if (arrayMid[j].compareTo(arrayRight[k]) < 0)
+                    destArray[l++] = arrayMid[j++];
+                else
+                    destArray[l++] = arrayRight[k++];
+            }
+        }
+
+        // case where first and second ranges have
+        // remaining values
+        while ((i < mid1) && (j < mid2)) {
+            if (arrayLeft[i].compareTo(arrayMid[j]) < 0)
+                destArray[l++] = arrayLeft[i++];
+            else
+                destArray[l++] = arrayMid[j++];
+        }
+
+        // case where second and third ranges have
+        // remaining values
+        while ((j < mid2) && (k < high)) {
+            if (arrayMid[j].compareTo(arrayRight[k]) < 0)
+                destArray[l++] = arrayMid[j++];
+
+            else
+                destArray[l++] = arrayRight[k++];
+        }
+
+        // case where first and third ranges have
+        // remaining values
+        while ((i < mid1) && (k < high)) {
+            if (arrayLeft[i].compareTo(arrayRight[k]) < 0)
+                destArray[l++] = arrayLeft[i++];
+            else
+                destArray[l++] = arrayRight[k++];
+        }
+
+        // copy remaining values from the first range
+        while (i < mid1)
+            destArray[l++] = arrayLeft[i++];
+
+        // copy remaining values from the second range
+        while (j < mid2)
+            destArray[l++] = arrayMid[j++];
+
+        // copy remaining values from the third range
+        while (k < high)
+            destArray[l++] = arrayRight[k++];
+
+        return destArray;
+    }
+
+
 }
