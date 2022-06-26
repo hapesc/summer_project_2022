@@ -9,4 +9,4 @@ Task01：
 Task02：
 重构代码
 要求：将data01-40.txt排序，输出成resultA-Z.txt
-分析：每个文件1G，大概1亿行字符串，每一次归并好的数组直接按首字母写入resultA01tempXX.txt临时文件，再对resultA01-40tempXX归并
+分析：每个文件1G，大概1亿行字符串，每一次归并好的数组直接按首字母写入resultaTemp0.txt临时文件，再对resultA01-40tempXX归并

@@ -11,20 +11,22 @@ import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 
 public class BigDataSort {
+    static GetFilePath path=new GetFilePath();
     public static void main(String[] args) throws IOException {
-        String filePath="/Users/michael-liang/Desktop/IO_Test/TestSet_B.txt";
-        String tempPath="/Users/michael-liang/Desktop/IO_Test/TestSet_B_temp/";
-        Path tempDir = Paths.get(tempPath);
-        if(!new File(tempPath).isDirectory())
-            Files.createDirectory(tempDir);
-        tempPath+="temp";
-        String[] FilePaths=new String[26];
-        sortSingleFile(filePath,tempPath);
+//        String filePath="/Users/michael-liang/Desktop/IO_Test/TestSet_B.txt";
+//        String tempPath="/Users/michael-liang/Desktop/IO_Test/TestSet_B_temp/";
+//        String[] FilePaths=new String[41];
+
+
+        for(int i=1;i<=40;i++) {
+            String filePath=path.getInputPath(i,-1,'0');
+            sortSingleFile(i,filePath, path.TempPaths);
+        }
 
     }
 
-    public static void sortSingleFile(String filePath,String tempPath) throws IOException {
-//
+    public static void sortSingleFile(int num,String filePath,String[] tempPaths) throws IOException {
+
         int batchSize=500000;
         int eof = 0;
         long start = System.currentTimeMillis();
@@ -35,7 +37,7 @@ public class BigDataSort {
         ) {
 
             while(eof!=-1) {
-                Writer output = new FileWriter(tempPath+ PathCnt +".txt");
+
 
                 if(cnt>=batchSize) {
                     buffer = new String[batchSize];
@@ -54,10 +56,15 @@ public class BigDataSort {
                 pool.execute(sortTask);
                 String[] result = sortTask.compute();
 
-                for (String a : result)
+                for (String a : result) {
+                    char alpha = a.charAt(0);
+
+                    Writer output = new FileWriter(path.getOutPath(alpha,num));
                     output.write(a);
+                    output.close();
+                }
                 System.out.println("success"+PathCnt);
-                output.close();
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,14 +73,13 @@ public class BigDataSort {
             System.out.println(System.currentTimeMillis() - start);
         }
         PathCnt--;
-        int[] a=new int[2];
-        a[0]=0;a[1]=1;
-        mergeTempFile(a,tempPath,batchSize,"/Users/michael-liang/Desktop/IO_Test/TestSet_B_sorted01.txt");
+
 
     }
 
-    private static void mergeTempFile(int[]num,String dir,int batchSize,String outputPath) throws IOException {
+    private static void mergeTempFile(int[]num,int batchSize) throws IOException {
         long start=System.currentTimeMillis();
+        String outputPath;
         try(Writer output=new FileWriter(outputPath)) {
             ArrayList<String[]> temp = new ArrayList<>();
             Reader[] tempFile = new Reader[num.length];
