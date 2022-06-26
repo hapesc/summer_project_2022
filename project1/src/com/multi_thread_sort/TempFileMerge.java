@@ -7,55 +7,55 @@ import java.util.concurrent.RecursiveTask;
 
 
 public class TempFileMerge implements Runnable {
-    private static MergeSort mergeSort=new MergeSort();
-    private ArrayList<String[]> arrays;
-    int[] num;
-    String tempDir;
-    int batchSize;
-    String outputPath;
-    public TempFileMerge(int[]num,String dir,int batchSize,String outputPath) {
-        this.batchSize=batchSize;
-        this.num=num;
-        this.outputPath=outputPath;
-        this.tempDir=dir;
+    private ArrayList<String> tempFiles;
+    private GetFilePath path;
+    private FailedTree<String> tree;
+    private char alpha;
+    public TempFileMerge(char alpha,ArrayList<String> tempFiles, GetFilePath path) {
+        this.tempFiles = tempFiles;
+        this.path = path;
+        this.alpha=alpha;
     }
 
     @Override
     public void run() {
-        long start=System.currentTimeMillis();
-        try(Writer output=new FileWriter(outputPath)) {
-            arrays=new ArrayList<>();
-            Reader[] tempFile = new Reader[num.length];
-            int eof = 0;
-            for (int i = 0; i < num.length; i++) {
-                tempFile[i] = new FileReader(tempDir + num[i] + ".txt");
+        try(Writer output=new FileWriter(path.getOutputPath(alpha,-1,0))){
+            ArrayList<BufferedReader> bufferedReaders=new ArrayList<>(tempFiles.size());
+            for(int i=0;i<tempFiles.size();i++){
+                bufferedReaders.add(i,new BufferedReader(new FileReader(tempFiles.get(i))));
             }
-            int cnt = 0;
-            char buffer[] = new char[16];
-            //初始化字符串数组temp，以完成第一轮比较
-            for (int i = 0; i < tempFile.length; i++) {
-                String[] a = new String[batchSize];
-                for (int j = 0; j < batchSize; j++) {
-                    tempFile[i].read(buffer, 0, 16);
-                    a[j] = String.valueOf(buffer);
+            String line="";
+            ArrayList<String> toBeMerged =new ArrayList<>(tempFiles.size());
+            for(BufferedReader b:bufferedReaders){
+                line=b.readLine()+'\n';
+                toBeMerged.add(line);
+            }
+            tree=new FailedTree<>(toBeMerged);
+            Integer s=tree.getWinner();
+            output.write(tree.getLeaf(s));
+            output.flush();
+            while (bufferedReaders.size() > 0) {
+                String newLeaf = bufferedReaders.get(s).readLine()+"\n";
+                if (newLeaf == null || newLeaf.equals("")) {
+                    bufferedReaders.get(s).close();
+                    int remove = s;
+                    bufferedReaders.remove(remove);
+                    tree.del(s);
+                } else {
+                   tree.add(newLeaf, s);
                 }
-                arrays.add(a);
+                s = tree.getWinner();
+                if (s == null) {
+                    break;
+                }
+                output.write(tree.getLeaf(s) );
+                output.flush();
+            }
 
-            }
-            String[] result=null;
-            if(arrays.size()==2)
-             result = mergeSort.merge2way(arrays.get(0),arrays.get(1));
-            else if (arrays.size()==3) {
-                result= mergeSort.merge3way(arrays.get(0),arrays.get(1),arrays.get(2));
-            }
-            for (String a : result)
-                output.write(a);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            System.out.println("merge success"+" time:"+(start-System.currentTimeMillis()));
+
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

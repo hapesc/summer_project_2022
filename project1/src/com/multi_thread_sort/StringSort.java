@@ -6,7 +6,7 @@ public class StringSort implements SortActuator {
 
     @Override
     public String[] sort(String[] originArray) {
-        Arrays.sort(originArray);
+        Arrays.parallelSort(originArray);
         return originArray;
     }
 }
