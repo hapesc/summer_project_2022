@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class SingleFileSort implements Runnable{
     public static GetFilePath path;
@@ -14,8 +15,8 @@ public class SingleFileSort implements Runnable{
         this.path = path;
         this.num = num;
     }
-    public static void sortSingleFile(int num,String filePath,String[] tempPaths) throws IOException {
-
+    public static void sortSingleFile(int num,String filePath,String[] tempPaths) throws IOException, InterruptedException {
+        ArrayList<ArrayList<String>> tempFileFromSingleFile=new ArrayList<>(26);
         int batchSize=1000000;
         int eof = 0;
         long start = System.currentTimeMillis();
@@ -23,11 +24,9 @@ public class SingleFileSort implements Runnable{
         String line;
         ArrayList<String> buffer=new ArrayList<>(batchSize);
         Writer[] output=new FileWriter[26];
-//        for(int i=0;i<26;i++){
-//            char alpha= (char) ('a'+i);
-//
-//            output[i]=new FileWriter(path.getTempFile(alpha,num,PathCnt),true);
-//        }
+        for(int i=0;i<26;i++){
+            tempFileFromSingleFile.add(i,new ArrayList<>());
+        }
         try (BufferedReader data = new BufferedReader(new FileReader(filePath))) {
 
             while ((line = data.readLine()) != null) {
@@ -42,26 +41,22 @@ public class SingleFileSort implements Runnable{
                         if(PathCnt>0)
                             output[i].close();
                         output[i] = new FileWriter(p, true);
-                        path.tempFiles.get(i).add(p);
+//                        path.getTempFiles().get(i).add(p);
+                        tempFileFromSingleFile.get(i).add(p);
 
                     }
 
 
                     //      多线程归并排序
-//                    ForkJoinPool pool = new ForkJoinPool(); // 分配一个并行线程池
-//                    SortTask sortTask = new SortTask(buffer, new StringSort());
-//                    pool.execute(sortTask);
                     String[] result=new String[batchSize];
                     buffer.toArray(result);
                     Arrays.parallelSort(result);
-//                    String[] result = sortTask.compute();
 
                     for (String a : result) {
                         int at = a.charAt(0) - 'a';
                         if (at >= 0)
                             output[at].write(a);
                     }
-//                    System.out.println("success" + PathCnt);
                     buffer.clear();
                 }
             }
@@ -70,12 +65,14 @@ public class SingleFileSort implements Runnable{
             System.out.println("error");
         }
         PathCnt--;
-        ExecutorService pools= Executors.newCachedThreadPool();
-        for(int i=0;i<26;i++){
-            char alpha= (char) ('a'+i);
-            TempFileMerge task=new TempFileMerge(alpha,path.tempFiles.get(i),path);
+        ExecutorService pools=Executors.newCachedThreadPool();
+
+        for(int i=0;i<26;i++) {
+            char alpha=(char)('a'+i);
+            TempFileMerge task=new TempFileMerge(alpha,tempFileFromSingleFile.get(i),path,0);
             pools.submit(task);
         }
+        pools.awaitTermination(10, TimeUnit.MINUTES);
         System.out.println((System.currentTimeMillis() - start)/1000.0);
     }
 
@@ -83,8 +80,8 @@ public class SingleFileSort implements Runnable{
     @Override
     public void run() {
         try {
-            sortSingleFile(num,path.getInputPath(num,-1,'0'), path.TempPaths);
-        } catch (IOException e) {
+            sortSingleFile(num,path.getInputPath(num,-1,'0'), path.getTempPaths());
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }

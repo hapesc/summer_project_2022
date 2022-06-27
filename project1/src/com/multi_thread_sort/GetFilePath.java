@@ -8,10 +8,17 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class GetFilePath {
-    public  String[] TempPaths=new String[26];
-    ArrayList<ArrayList<String>> tempFiles=new ArrayList<>(26);
+    //单例设计模式
+    private static GetFilePath path=new GetFilePath();
+    //一级临时文件的文件夹路径
+    private   String[] TempPaths=new String[26];
+    //二级临时文件的文件路径
+    private ArrayList<ArrayList<String>> tempFiles=new ArrayList<>(26);
+    public static GetFilePath getFilePath(){
+        return path;
+    }
 
-    public GetFilePath() {
+    private GetFilePath() {
         for (int i = 0; i < 26; i++) {
             tempFiles.add(i,new ArrayList<>());
             String tempPath = "/Users/michael-liang/Desktop/IO_Test/result";
@@ -33,7 +40,7 @@ public class GetFilePath {
     /**
      * 获得"dataXX.txt"或"resultaTemp0.txt"的文件地址
      * @param num 文件序号
-     * @param temp  -1代表data1-40，大于0代表临时文件序号
+     * @param temp  -1代表源文件，大于0代表临时文件序号
      * @param alpha 临时文件首字母
      * @return  对应文件路径
      */
@@ -54,8 +61,8 @@ public class GetFilePath {
     /**
      *
      * @param alpha 字符串首字母
-     * @param num -1代表最终输出文件，1-40代表临时文件
-     * @param num2 代表每一个batch产生的临时文件序号
+     * @param num -1代表最终输出文件，1-8代表临时文件
+     * @param num2 代表每一个batch产生的临时文件序号,-1代表输出最终文件，0代表二级归并文件
      * @return  对应文件路径
      */
     public  String getOutputPath(char alpha,int num,int num2){
@@ -73,13 +80,33 @@ public class GetFilePath {
             outPath = "/Users/michael-liang/Desktop/Result/result" + alpha;
         }
 
-        if (num>0) {
+        if (num>0&&num2>0) {
             outPath=TempPaths[alpha-'a']+"result"+alpha+num+"_"+num2;
+        }else if(num>0&&num2==0) {
+            String outputDir="/Users/michael-liang/Desktop/Result/toBeMerged/";
+            Path tempDir = Paths.get(outputDir);
+            if (!new File(outputDir).isDirectory()) {
+                try {
+                    Files.createDirectory(tempDir);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            outPath = outputDir+"result"+alpha+num+".txt";
+            this.tempFiles.get(alpha-'a').add(outPath);
         }
         return outPath+".txt";
     }
 
     public String getTempFile(char alpha,int num,int num2){
         return TempPaths[alpha-'a']+"result"+alpha+num+"_"+num2+".txt";
+    }
+
+    public ArrayList<ArrayList<String>> getTempFiles() {
+        return tempFiles;
+    }
+
+    public String[] getTempPaths() {
+        return TempPaths;
     }
 }

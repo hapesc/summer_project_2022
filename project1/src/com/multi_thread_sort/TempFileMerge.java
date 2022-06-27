@@ -11,15 +11,17 @@ public class TempFileMerge implements Runnable {
     private GetFilePath path;
     private FailedTree<String> tree;
     private char alpha;
-    public TempFileMerge(char alpha,ArrayList<String> tempFiles, GetFilePath path) {
+    private int Mode;
+    public TempFileMerge(char alpha,ArrayList<String> tempFiles, GetFilePath path,int Mode) {
         this.tempFiles = tempFiles;
         this.path = path;
         this.alpha=alpha;
+        this.Mode=Mode;
     }
 
     @Override
     public void run() {
-        try(Writer output=new FileWriter(path.getOutputPath(alpha,-1,0))){
+        try(Writer output=new FileWriter(path.getOutputPath(alpha,-1,Mode))){
             ArrayList<BufferedReader> bufferedReaders=new ArrayList<>(tempFiles.size());
             for(int i=0;i<tempFiles.size();i++){
                 bufferedReaders.add(i,new BufferedReader(new FileReader(tempFiles.get(i))));
