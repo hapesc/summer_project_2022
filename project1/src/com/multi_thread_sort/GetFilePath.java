@@ -60,8 +60,18 @@ public class GetFilePath {
      */
     public  String getOutputPath(char alpha,int num,int num2){
         String outPath=null;
-        if(num==-1)
-            outPath="/Users/michael-liang/Desktop/Result/result"+alpha;
+        if(num==-1) {
+            String outputDir="/Users/michael-liang/Desktop/Result/";
+            Path tempDir = Paths.get(outputDir);
+            if (!new File(outputDir).isDirectory()) {
+                try {
+                    Files.createDirectory(tempDir);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            outPath = "/Users/michael-liang/Desktop/Result/result" + alpha;
+        }
 
         if (num>0) {
             outPath=TempPaths[alpha-'a']+"result"+alpha+num+"_"+num2;

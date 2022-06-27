@@ -16,7 +16,7 @@ public class SingleFileSort implements Runnable{
     }
     public static void sortSingleFile(int num,String filePath,String[] tempPaths) throws IOException {
 
-        int batchSize=250000;
+        int batchSize=1000000;
         int eof = 0;
         long start = System.currentTimeMillis();
         int cnt=0,PathCnt=-1;
