@@ -21,7 +21,7 @@ public class Task implements Runnable {
             Random r = new Random();
             StringBuffer sb;
             String strSeed = "abcdefghijklmnopqrstuvwxyz";
-            for (long i = 0; i < 1e8; i++) {
+            for (long i = 0; i < 5*1e8; i++) {
                 sb = new StringBuffer(16);
                 for (int j = 0; j < 15; j++) {
                     sb.append(strSeed.charAt(r.nextInt(25)));

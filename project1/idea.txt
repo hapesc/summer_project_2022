@@ -1,5 +1,9 @@
 
 Task01：
 把单文件排序重构为多线程
-要求：将data01-40.txt排序，输出成resultA-Z.txt
-分析：每个文件1G，大概1亿行字符串，每一次归并好的数组直接按首字母写入resultaTemp1_0.txt临时文件，再对resultA01-40tempXX归并
+要求：将data01-08.txt排序，输出成resultA-Z.txt
+分析：每个文件5G，共25亿行字符串，每一次归并好的数组直接按首字母写入resultaTemp1_0.txt临时文件，再对resultA01-40tempXX归并
+
+Task02:
+8台机之间通信
+将resultA-Z传输到对应机子，然后归并
