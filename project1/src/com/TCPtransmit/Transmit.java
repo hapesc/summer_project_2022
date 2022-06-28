@@ -60,7 +60,9 @@ public class Transmit {
         for(int i=0;i<26;i++){
             char alpha=(char)('a'+i);
             int clientName=(Integer)clientNames.get(alpha);
-            new Thread(new Client((String)IPmap.get(alpha), port,alpha,String.valueOf(clientName),path)).start();
+//            String ip=(String)IPmap.get(alpha);
+            String ip="192.168.1.102";
+            new Thread(new Client(ip, port,alpha,String.valueOf(clientName),path)).start();
         }
     }
 
