@@ -16,7 +16,7 @@ public class Task implements Runnable {
 
     @Override
     public void run() {
-        try (FileWriter output = new FileWriter("/Users/michael-liang/Desktop/IO_Test/data"+path,true)) {
+        try (FileWriter output = new FileWriter("D:/IO_Test/data"+path,true)) {
 
             Random r = new Random();
             StringBuffer sb;

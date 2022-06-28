@@ -1,5 +1,7 @@
 package com.multi_thread_sort;
 
+import com.TCPtransmit.Client;
+import com.TCPtransmit.Server;
 import com.TCPtransmit.Transmit;
 
 import javax.swing.*;
@@ -23,6 +25,7 @@ public class BigDataSort {
             "10.251.134.80"};
 
     public static void main(String[] args) throws IOException, InterruptedException {
+
         System.out.println("请输入你的主机序号：");
         Scanner in=new Scanner(System.in);
         int clientName=in.nextInt();
@@ -52,12 +55,11 @@ public class BigDataSort {
                         sizes[i] = 2500;
 //                        System.out.println(sizes[i]);
                         tasks[i] = new MergeTask(alpha, path, getList(sizes[i]), 1, 1, 0);
-                        pools.submit(tasks[i]);
+//                        pools.submit(tasks[i]);
 //                        tasks[i].run();
             }
             pools.shutdown();
             if(pools.awaitTermination(40,TimeUnit.MINUTES)){
-                //启动传输
                 new Transmit(4700,path).start();
             }
             //等10min

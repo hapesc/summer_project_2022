@@ -11,8 +11,8 @@ public class GetFilePath {
     //单例设计模式
 
     //临时文件总文件夹路径
-    private final static String tempPath = "/Users/michael-liang/Desktop/IO_Test/Temp/";
-    private final static String clientDir = "/Users/michael-liang/Desktop/Result/FromClient/";
+    private final static String tempPath = "D:/IO_Test/Temp/";
+    private final static String clientDir = "D:/Result/FromClient/";
     //各级临时文件的文件夹路径
     private ArrayList<ArrayList<ArrayList<String>>> tempFiles = new ArrayList<>();
 
@@ -29,7 +29,14 @@ public class GetFilePath {
 
                 Files.createDirectory(tempDir);
             }
-            String outputDir = "/Users/michael-liang/Desktop/Result/";
+            String outputDir = "D:/Result/";
+
+            if (!new File(outputDir).isDirectory()) {
+
+                    Files.createDirectory(Paths.get(outputDir));
+
+            }
+//            String outputDir = "/Users/michael-liang/Desktop/Result/";
             if (!new File(outputDir).isDirectory()) {
                     Files.createDirectory(Paths.get(outputDir));
             }
@@ -54,10 +61,10 @@ public class GetFilePath {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
 
         }
-        //创建客户端文件夹
+
 
     }
 
@@ -77,7 +84,7 @@ public class GetFilePath {
      * @return 对应文件路径
      */
     public String getInputPath(int num, int tempNum, int mergedTimes, char alpha) {
-        String dir = "/Users/michael-liang/Desktop/IO_Test/";
+        String dir = "D:/IO_Test/";
         if (tempNum == -1) {
             if (num < 10)
                 return dir + "data" + "0" + num + ".txt";
@@ -101,7 +108,7 @@ public class GetFilePath {
         String outPath = null;
         //最终文件的输出路径
         if (num == -1 && tempNum == -1) {
-            String outputDir = "/Users/michael-liang/Desktop/Result/";
+            String outputDir = "D:/Result/";
             Path tempDir = Paths.get(outputDir);
             if (!new File(outputDir).isDirectory()) {
                 try {
@@ -110,7 +117,7 @@ public class GetFilePath {
                     throw new RuntimeException(e);
                 }
             }
-            outPath = "/Users/michael-liang/Desktop/Result/result" + alpha + ".txt";
+            outPath = "D:/Result/result" + alpha + ".txt";
         }
         //临时文件输出路径：Temp/Temp+mergedTimes/result+a-z/num.txt
         if (num > 0) {
