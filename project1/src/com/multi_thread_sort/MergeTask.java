@@ -30,10 +30,10 @@ public class MergeTask implements Runnable {
 
         while (size > 1) {
             System.out.println("Task:" + alpha + (mergedTimes + 1));
-            pool.invoke(task);
-            task.join();
+            size=pool.invoke(task);
             mergedTimes++;
-            size = new HashSet<>(path.getTempFiles().get(mergedTimes).get(alpha-'a')).size();
+//            size = new HashSet<>(path.getTempFiles().get(mergedTimes).get(alpha-'a')).size();
+//            size/=2;
             task = new TempFileMerge(alpha, path, BigDataSort.getList(size), num, tempNum, mergedTimes);
             pool = new ForkJoinPool();
         }

@@ -31,7 +31,7 @@ public class SeverThread implements Runnable {
             this.alpha = bfr.readLine().charAt(0);
             System.out.println("连接已建立：client" + clientName);
             System.out.println("即将传输result" + alpha);
-            String outputPath = path.getClientOutputPath(alpha, clientName);
+            String outputPath = path.getClientPath(alpha, clientName);
             FileWriter out = new FileWriter(outputPath);
             while ((line = bfr.readLine()) != null) {
                 out.write(line + '\n');

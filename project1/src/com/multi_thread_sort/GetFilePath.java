@@ -12,6 +12,7 @@ public class GetFilePath {
 
     //临时文件总文件夹路径
     private final static String tempPath = "/Users/michael-liang/Desktop/IO_Test/Temp/";
+    private final static String clientDir = "/Users/michael-liang/Desktop/Result/FromClient/";
     //各级临时文件的文件夹路径
     private ArrayList<ArrayList<ArrayList<String>>> tempFiles = new ArrayList<>();
 
@@ -22,48 +23,45 @@ public class GetFilePath {
 
     private GetFilePath() {
         //  创建临时文件总文件夹
-        Path tempDir = Paths.get(tempPath);
-        if (!new File(tempPath).isDirectory()) {
-            try {
+        try {
+            Path tempDir = Paths.get(tempPath);
+            if (!new File(tempPath).isDirectory()) {
+
                 Files.createDirectory(tempDir);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-
             }
-        }
-        for (int i = 0; i < 20; i++) {
-            String tempdir = tempPath + "Temp" + i + "/";
-            if (!new File(tempdir).isDirectory()) {
-                try {
+            if (!new File(clientDir).isDirectory())
+                Files.createDirectory(Paths.get(clientDir));
+            for (int i = 0; i < 20; i++) {
+                String tempdir = tempPath + "Temp" + i + "/";
+                if (!new File(tempdir).isDirectory()) {
                     Files.createDirectory(Paths.get(tempdir));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-
                 }
-            }
-            cnt.add(new int[26]);
-            tempFiles.add(i, new ArrayList<>(26));
-            for(int j=0;j<26;j++){
-                tempFiles.get(i).add(j,new ArrayList<>());
-                String outputDir = tempPath + "Temp" + i + "/" + "result" + (char)('a'+j) + "/";
-                //新建TempX文件夹
-                Path dir = Paths.get(outputDir);
-                File f=new File(outputDir);
-                if (!f.isDirectory()&&!f.exists()) {
-                    try {
-
+                cnt.add(new int[26]);
+                tempFiles.add(i, new ArrayList<>(26));
+                for (int j = 0; j < 26; j++) {
+                    tempFiles.get(i).add(j, new ArrayList<>());
+                    String outputDir = tempPath + "Temp" + i + "/" + "result" + (char) ('a' + j) + "/";
+                    //新建TempX文件夹
+                    Path dir = Paths.get(outputDir);
+                    File f = new File(outputDir);
+                    if (!f.isDirectory() && !f.exists()) {
                         Files.createDirectory(dir);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
                     }
                 }
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
         }
+        //创建客户端文件夹
+
     }
+
     private static GetFilePath path = new GetFilePath();
+
     public static GetFilePath getFilePath() {
-            return path;
-        }
+        return path;
+    }
 
     /**
      * 获得"dataXX.txt"或"resultaTempX0.txt"的文件地址
@@ -114,9 +112,9 @@ public class GetFilePath {
         if (num > 0) {
             String outputDir = tempPath + "Temp" + mergedTimes + "/" + "result" + alpha + "/";
 
-            if (tempFiles.get(mergedTimes).size()==0)
+            if (tempFiles.get(mergedTimes).size() == 0)
                 this.tempFiles.get(mergedTimes).add(alpha - 'a', new ArrayList<>());
-            outPath = outputDir + (getNum(alpha,mergedTimes)) + ".txt";
+            outPath = outputDir + (getNum(alpha, mergedTimes)) + ".txt";
             tempFiles.get(mergedTimes).get(alpha - 'a').add(outPath);
         }
         return outPath;
@@ -125,19 +123,21 @@ public class GetFilePath {
     public ArrayList<ArrayList<ArrayList<String>>> getTempFiles() {
         return tempFiles;
     }
-    private synchronized int getNum(char alpha,int mergedTimes){
-        int a=cnt.get(mergedTimes)[alpha-'a']++;
+
+    private synchronized int getNum(char alpha, int mergedTimes) {
+        int a = cnt.get(mergedTimes)[alpha - 'a']++;
         return a;
     }
 
     //server从client接收到字符以后，要写入的文件路径
-    public String getClientOutputPath(char alpha,int clientName){
-        //todo
-        return null;
+    public String getClientPath(char alpha, int clientName) {
+
+        return clientDir+alpha + clientName + ".txt";
     }
-    //client要传输的文件的文件路径
-    public String getClientInputPath(char alpha,int clientName){
-        //todo
-        return null;
+
+    //待传输的文件的文件路径
+    public String getTransmitPath(char alpha, int clientName) {
+
+        return getOutputPath(alpha,-1,-1,0);
     }
 }

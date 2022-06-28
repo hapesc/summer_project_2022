@@ -74,6 +74,7 @@ public class TempFileMerge extends RecursiveTask<Integer> {
 
     @Override
     protected Integer compute() {
+        //todo 重写归并
         if (tempFiles.size() ==3) {
             int size=tempFiles.size();
             BufferedReader[] reader = new BufferedReader[size];
@@ -95,6 +96,7 @@ public class TempFileMerge extends RecursiveTask<Integer> {
                 Writer out = new FileWriter(outputPath);
                 for (String s : strings) {
                     out.write(s);
+                    out.flush();
                 }
                 out.close();
 //                for(String s:tempFiles){
@@ -127,6 +129,7 @@ public class TempFileMerge extends RecursiveTask<Integer> {
                 Writer out = new FileWriter(outputPath);
                 for (String s : strings) {
                     out.write(s);
+                    out.flush();
                 }
                 out.close();
 //                for(String s:tempFiles){
@@ -141,14 +144,14 @@ public class TempFileMerge extends RecursiveTask<Integer> {
         int mid1 = tempFiles.size() / 2;
         int mid2 = mid1 * 2;
         List<Integer> left = tempFiles.subList(0, mid1);
-//        List<String> mid= tempFiles.subList(mid1,mid2);
+        List<Integer> mid= tempFiles.subList(mid1,mid2);
         List<Integer> right = tempFiles.subList(mid1, tempFiles.size());
         TempFileMerge TaskL = new TempFileMerge(alpha, path, left, num, tempNum, mergedTimes);
-//        TempFileMerge TaskM=new TempFileMerge(alpha,path,mid,num,tempNum,mergedTimes);
+        TempFileMerge TaskM=new TempFileMerge(alpha,path,mid,num,tempNum,mergedTimes);
         TempFileMerge TaskR = new TempFileMerge(alpha, path, right, num, tempNum, mergedTimes);
-        invokeAll(TaskL, TaskR);
+        invokeAll(TaskL, TaskR,TaskM);
 //        a.addAll(TaskM.join());
-        return TaskL.join() + TaskR.join();
+        return TaskL.join() + TaskR.join()+TaskM.join();
     }
 
     private String[] readFromFile(BufferedReader b) throws IOException {

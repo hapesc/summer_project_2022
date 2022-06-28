@@ -10,20 +10,28 @@ import java.util.concurrent.*;
 
 public class BigDataSort {
     static GetFilePath path = GetFilePath.getFilePath();
+    public static final String[] IPadress={"",
+            "10.251.134.43",
+            "10.251.134.44",
+            "10.251.134.112",
+            "10.251.134.66",
+            "10.251.134.67",
+            "10.251.134.68",
+            "10.251.134.79",
+            "10.251.134.80"};
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
         long start = System.currentTimeMillis();
-        ExecutorService pools = Executors.newCachedThreadPool();
+        ExecutorService pools = null;
 
         for (int i = 1; i <= 1; i++) {
             String filePath = path.getInputPath(i, -1, 0, '0');
             System.out.println(filePath);
-            SingleFileSort task = new SingleFileSort(path, i);
-            pools.submit(task);
+            new SingleFileSort(path, i).start();
         }
-        pools.shutdown();
-        if (pools.awaitTermination(10, TimeUnit.MINUTES)) {
+
+
             pools=Executors.newFixedThreadPool(26);
             int[] sizes=new int[26];
 
@@ -35,17 +43,18 @@ public class BigDataSort {
             for (int i = 0; i < 26; i++) {
 
                         char alpha = (char) ('a' + i);
-                        int size = new HashSet<>(path.getTempFiles().get(0).get(i)).size();
-                        sizes[i] = size;
+//                        int size = new HashSet<>(path.getTempFiles().get(0).get(i)).size();
+
+                        sizes[i] = 2500;
 //                        System.out.println(sizes[i]);
                         tasks[i] = new MergeTask(alpha, path, getList(sizes[i]), 1, 1, 0);
                         pools.submit(tasks[i]);
 //                        tasks[i].run();
             }
-            pools.shutdown();
-            pools.awaitTermination(10,TimeUnit.MINUTES);
+//            pools.shutdown();
+            pools.awaitTermination(20,TimeUnit.MINUTES);
+            //todo 归并完将临时文件移动到result文件夹
 
-        }
 
         System.out.println("总用时：" + (System.currentTimeMillis() - start) / 1000.0);
 
