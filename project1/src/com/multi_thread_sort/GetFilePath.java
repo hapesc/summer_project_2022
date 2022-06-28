@@ -44,6 +44,7 @@ public class GetFilePath {
             cnt.add(new int[26]);
             tempFiles.add(i, new ArrayList<>(26));
             for(int j=0;j<26;j++){
+                tempFiles.get(i).add(j,new ArrayList<>());
                 String outputDir = tempPath + "Temp" + i + "/" + "result" + (char)('a'+j) + "/";
                 //新建TempX文件夹
                 Path dir = Paths.get(outputDir);
@@ -127,5 +128,16 @@ public class GetFilePath {
     private synchronized int getNum(char alpha,int mergedTimes){
         int a=cnt.get(mergedTimes)[alpha-'a']++;
         return a;
+    }
+
+    //server从client接收到字符以后，要写入的文件路径
+    public String getClientOutputPath(char alpha,int clientName){
+        //todo
+        return null;
+    }
+    //client要传输的文件的文件路径
+    public String getClientInputPath(char alpha,int clientName){
+        //todo
+        return null;
     }
 }

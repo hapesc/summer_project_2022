@@ -24,7 +24,7 @@ public class BigDataSort {
         }
         pools.shutdown();
         if (pools.awaitTermination(10, TimeUnit.MINUTES)) {
-            pools=Executors.newCachedThreadPool();
+            pools=Executors.newFixedThreadPool(26);
             int[] sizes=new int[26];
 
 //            ArrayList<ForkJoinPool> forkpools = new ArrayList<>(26);
@@ -34,12 +34,13 @@ public class BigDataSort {
 
             for (int i = 0; i < 26; i++) {
 
-                    char alpha=(char)('a'+i);
-                    int size = new HashSet<>(path.getTempFiles().get(0).get(i)).size();
-                    sizes[i]=size;
-                    tasks[i]=new MergeTask(alpha,path,getList(sizes[i]),1,1,0);
-                    pools.submit(tasks[i]);
-
+                        char alpha = (char) ('a' + i);
+                        int size = new HashSet<>(path.getTempFiles().get(0).get(i)).size();
+                        sizes[i] = size;
+//                        System.out.println(sizes[i]);
+                        tasks[i] = new MergeTask(alpha, path, getList(sizes[i]), 1, 1, 0);
+                        pools.submit(tasks[i]);
+//                        tasks[i].run();
             }
             pools.shutdown();
             pools.awaitTermination(10,TimeUnit.MINUTES);

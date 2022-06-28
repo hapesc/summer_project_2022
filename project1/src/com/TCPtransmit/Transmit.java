@@ -8,6 +8,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 // 服务器端程序
 public class Transmit {
+    public static final String[] IPadress={"",
+                                            "10.251.134.43",
+                                            "10.251.134.44",
+                                            "10.251.134.112",
+                                            "10.251.134.66",
+                                            "10.251.134.67",
+                                            "10.251.134.68",
+                                            "10.251.134.79",
+                                            "10.251.134.80"};
     public static void main(String[] args) throws IOException {
 //        ServerSocket server=new ServerSocket(4700);
         try{
