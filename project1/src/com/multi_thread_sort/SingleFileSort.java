@@ -15,8 +15,8 @@ public class SingleFileSort implements Runnable{
         this.path = path;
         this.num = num;
     }
-    public static void sortSingleFile(int num,String filePath,String[] tempPaths) throws IOException, InterruptedException {
-        ArrayList<ArrayList<String>> tempFileFromSingleFile=new ArrayList<>(26);
+    public static void sortSingleFile(int num,String filePath) throws IOException, InterruptedException {
+
         int batchSize=1000000;
         int eof = 0;
         long start = System.currentTimeMillis();
@@ -25,7 +25,7 @@ public class SingleFileSort implements Runnable{
         ArrayList<String> buffer=new ArrayList<>(batchSize);
         Writer[] output=new FileWriter[26];
         for(int i=0;i<26;i++){
-            tempFileFromSingleFile.add(i,new ArrayList<>());
+            path.getTempFiles().get(0).add(i,new ArrayList<>());
         }
         try (BufferedReader data = new BufferedReader(new FileReader(filePath))) {
 
@@ -37,12 +37,12 @@ public class SingleFileSort implements Runnable{
                     for (int i = 0; i < 26; i++) {
 
                         char alpha = (char) ('a' + i);
-                        String p=path.getTempFile(alpha, num, PathCnt);
+                        String p=path.getOutputPath(alpha, num, PathCnt,0);
                         if(PathCnt>0)
                             output[i].close();
-                        output[i] = new FileWriter(p, true);
+                        output[i] = new FileWriter(p);
 //                        path.getTempFiles().get(i).add(p);
-                        tempFileFromSingleFile.get(i).add(p);
+                        path.getTempFiles().get(0).get(i).add(p);
 
                     }
 
@@ -65,14 +65,7 @@ public class SingleFileSort implements Runnable{
             System.out.println("error");
         }
         PathCnt--;
-        ExecutorService pools=Executors.newCachedThreadPool();
 
-        for(int i=0;i<26;i++) {
-            char alpha=(char)('a'+i);
-            TempFileMerge task=new TempFileMerge(alpha,tempFileFromSingleFile.get(i),path,0);
-            pools.submit(task);
-        }
-        pools.awaitTermination(10, TimeUnit.MINUTES);
         System.out.println((System.currentTimeMillis() - start)/1000.0);
     }
 
@@ -80,7 +73,7 @@ public class SingleFileSort implements Runnable{
     @Override
     public void run() {
         try {
-            sortSingleFile(num,path.getInputPath(num,-1,'0'), path.getTempPaths());
+            sortSingleFile(num,path.getInputPath(num,-1,0,'0'));
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }

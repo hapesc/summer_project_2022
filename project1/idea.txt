@@ -7,3 +7,5 @@ Task01：
 Task02:
 8台机之间通信
 将resultA-Z传输到对应机子，然后归并
+
+文件格式：   Temp/Temp+mergedTimes/result+a-z/num.txt

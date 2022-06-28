@@ -7,7 +7,7 @@ public class MergeSort {
      * @param arrayLeft
      * @param arrayRight
      */
-    public String[] merge2way(String[] arrayLeft,String[] arrayRight) {
+    public static String[] merge2way(String[] arrayLeft,String[] arrayRight) {
         String[] result = new String[arrayLeft.length + arrayRight.length];
         for (int index = 0, lIndex = 0, rIndex = 0; index < result.length; index++) {
             if (lIndex > arrayLeft.length - 1) {
@@ -25,14 +25,14 @@ public class MergeSort {
         }
         return result;
     }
-    public String[] merge3way(String[] arrayLeft, String[] arrayMid, String[] arrayRight) {
+    public static String[] merge3way(String[] arrayLeft, String[] arrayMid, String[] arrayRight) {
         String[] destArray = new String[arrayLeft.length + arrayMid.length + arrayRight.length];
         int i = 0, j = 0, k = 0, l = 0;
         int mid1 = arrayLeft.length, mid2 = arrayMid.length, high = arrayRight.length;
         // choose smaller of the smallest in the three ranges
         while ((i < mid1) && (j < mid2) && (k < high)) {
             if (arrayLeft[i].compareTo(arrayMid[j]) < 0) {
-                if (arrayLeft[i].compareTo(arrayMid[k]) < 0)
+                if (arrayLeft[i].compareTo(arrayRight[k]) < 0)
                     destArray[l++] = arrayLeft[i++];
 
                 else

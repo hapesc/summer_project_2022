@@ -9,66 +9,96 @@ import java.util.ArrayList;
 
 public class GetFilePath {
     //单例设计模式
-    private static GetFilePath path=new GetFilePath();
-    //一级临时文件的文件夹路径
-    private   String[] TempPaths=new String[26];
-    //二级临时文件的文件路径
-    private ArrayList<ArrayList<String>> tempFiles=new ArrayList<>(26);
-    public static GetFilePath getFilePath(){
-        return path;
-    }
+
+    //临时文件总文件夹路径
+    private final static String tempPath = "/Users/michael-liang/Desktop/IO_Test/Temp/";
+    //各级临时文件的文件夹路径
+    private ArrayList<ArrayList<ArrayList<String>>> tempFiles = new ArrayList<>();
+
+
+    //为临时文件计数
+    private static ArrayList<int[]> cnt = new ArrayList<>();
+
 
     private GetFilePath() {
-        for (int i = 0; i < 26; i++) {
-            tempFiles.add(i,new ArrayList<>());
-            String tempPath = "/Users/michael-liang/Desktop/IO_Test/result";
-            char alpha = (char) ('a' + i);
-            tempPath = tempPath + alpha + "Temp/";
-            TempPaths[i] = tempPath;
-            Path tempDir = Paths.get(tempPath);
-            if (!new File(tempPath).isDirectory()) {
+        //  创建临时文件总文件夹
+        Path tempDir = Paths.get(tempPath);
+        if (!new File(tempPath).isDirectory()) {
+            try {
+                Files.createDirectory(tempDir);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+
+            }
+        }
+        for (int i = 0; i < 20; i++) {
+            String tempdir = tempPath + "Temp" + i + "/";
+            if (!new File(tempdir).isDirectory()) {
                 try {
-                    Files.createDirectory(tempDir);
+                    Files.createDirectory(Paths.get(tempdir));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
+
+                }
+            }
+            cnt.add(new int[26]);
+            tempFiles.add(i, new ArrayList<>(26));
+            for(int j=0;j<26;j++){
+                String outputDir = tempPath + "Temp" + i + "/" + "result" + (char)('a'+j) + "/";
+                //新建TempX文件夹
+                Path dir = Paths.get(outputDir);
+                File f=new File(outputDir);
+                if (!f.isDirectory()&&!f.exists()) {
+                    try {
+
+                        Files.createDirectory(dir);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
     }
-
+    private static GetFilePath path = new GetFilePath();
+    public static GetFilePath getFilePath() {
+            return path;
+        }
 
     /**
-     * 获得"dataXX.txt"或"resultaTemp0.txt"的文件地址
-     * @param num 文件序号
-     * @param temp  -1代表源文件，大于0代表临时文件序号
-     * @param alpha 临时文件首字母
-     * @return  对应文件路径
+     * 获得"dataXX.txt"或"resultaTempX0.txt"的文件地址
+     *
+     * @param num         源文件序号
+     * @param tempNum     -1代表源文件，大于0代表临时文件序号
+     * @param alpha       临时文件首字母
+     * @param mergedTimes 归并次数
+     * @return 对应文件路径
      */
-    public  String getInputPath(int num,int temp,char alpha){
-        String dir="/Users/michael-liang/Desktop/IO_Test/";
-        if(temp==-1) {
+    public String getInputPath(int num, int tempNum, int mergedTimes, char alpha) {
+        String dir = "/Users/michael-liang/Desktop/IO_Test/";
+        if (tempNum == -1) {
             if (num < 10)
-                return dir+"data" + "0" + num + ".txt";
+                return dir + "data" + "0" + num + ".txt";
             else
-                return dir+"data" + num + ".txt";
-        }else if(temp>=0){
-            return dir+"result"+alpha+"Temp"+num+".txt";
+                return dir + "data" + num + ".txt";
+        } else if (tempNum >= 0) {
+            return tempPath + "Temp" + mergedTimes + "/result" + alpha + "/" + tempNum + ".txt";
         }
         return null;
     }
 
 
     /**
-     *
-     * @param alpha 字符串首字母
-     * @param num -1代表最终输出文件，1-8代表临时文件
-     * @param num2 代表每一个batch产生的临时文件序号,-1代表输出最终文件，0代表二级归并文件
-     * @return  对应文件路径
+     * @param alpha       字符串首字母
+     * @param num         源文件序号 -1代表最终输出文件，1-8代表临时文件
+     * @param tempNum     代表每一个batch产生的临时文件序号,-1代表输出最终文件
+     * @param mergedTimes 归并次数
+     * @return 对应文件路径
      */
-    public  String getOutputPath(char alpha,int num,int num2){
-        String outPath=null;
-        if(num==-1) {
-            String outputDir="/Users/michael-liang/Desktop/Result/";
+    public String getOutputPath(char alpha, int num, int tempNum, int mergedTimes) {
+        String outPath = null;
+        //最终文件的输出路径
+        if (num == -1 && tempNum == -1) {
+            String outputDir = "/Users/michael-liang/Desktop/Result/";
             Path tempDir = Paths.get(outputDir);
             if (!new File(outputDir).isDirectory()) {
                 try {
@@ -77,36 +107,25 @@ public class GetFilePath {
                     throw new RuntimeException(e);
                 }
             }
-            outPath = "/Users/michael-liang/Desktop/Result/result" + alpha;
+            outPath = "/Users/michael-liang/Desktop/Result/result" + alpha + ".txt";
         }
+        //临时文件输出路径：Temp/Temp+mergedTimes/result+a-z/num.txt
+        if (num > 0) {
+            String outputDir = tempPath + "Temp" + mergedTimes + "/" + "result" + alpha + "/";
 
-        if (num>0&&num2>0) {
-            outPath=TempPaths[alpha-'a']+"result"+alpha+num+"_"+num2;
-        }else if(num>0&&num2==0) {
-            String outputDir="/Users/michael-liang/Desktop/Result/toBeMerged/";
-            Path tempDir = Paths.get(outputDir);
-            if (!new File(outputDir).isDirectory()) {
-                try {
-                    Files.createDirectory(tempDir);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            outPath = outputDir+"result"+alpha+num+".txt";
-            this.tempFiles.get(alpha-'a').add(outPath);
+            if (tempFiles.get(mergedTimes).size()==0)
+                this.tempFiles.get(mergedTimes).add(alpha - 'a', new ArrayList<>());
+            outPath = outputDir + (getNum(alpha,mergedTimes)) + ".txt";
+            tempFiles.get(mergedTimes).get(alpha - 'a').add(outPath);
         }
-        return outPath+".txt";
+        return outPath;
     }
 
-    public String getTempFile(char alpha,int num,int num2){
-        return TempPaths[alpha-'a']+"result"+alpha+num+"_"+num2+".txt";
-    }
-
-    public ArrayList<ArrayList<String>> getTempFiles() {
+    public ArrayList<ArrayList<ArrayList<String>>> getTempFiles() {
         return tempFiles;
     }
-
-    public String[] getTempPaths() {
-        return TempPaths;
+    private synchronized int getNum(char alpha,int mergedTimes){
+        int a=cnt.get(mergedTimes)[alpha-'a']++;
+        return a;
     }
 }
