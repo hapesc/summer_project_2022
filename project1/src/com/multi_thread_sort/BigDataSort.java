@@ -28,11 +28,11 @@ public class BigDataSort {
         for (int i = 1; i <= 1; i++) {
             String filePath = path.getInputPath(i, -1, 0, '0');
             System.out.println(filePath);
-            new SingleFileSort(path, i).start();
+//            new SingleFileSort(path, i).start();
         }
 
 
-            pools=Executors.newFixedThreadPool(26);
+            pools=Executors.newFixedThreadPool(2);
             int[] sizes=new int[26];
 
 //            ArrayList<ForkJoinPool> forkpools = new ArrayList<>(26);
@@ -51,7 +51,7 @@ public class BigDataSort {
                         pools.submit(tasks[i]);
 //                        tasks[i].run();
             }
-//            pools.shutdown();
+            pools.shutdown();
             pools.awaitTermination(20,TimeUnit.MINUTES);
             //todo 归并完将临时文件移动到result文件夹
 

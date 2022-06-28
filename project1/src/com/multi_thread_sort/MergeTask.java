@@ -2,11 +2,10 @@ package com.multi_thread_sort;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class MergeTask implements Runnable {
-    private static ForkJoinPool pool = new ForkJoinPool();
+//    private static ForkJoinPool pool = new ForkJoinPool();
     private static TempFileMerge task = null;
     private int size;
     private char alpha;
@@ -14,9 +13,11 @@ public class MergeTask implements Runnable {
     private int num;
     private int tempNum;
     private int mergedTimes;
+    private List<Integer> arrayList;
+    private CountDownLatch cLock=new CountDownLatch(5);
 
     public MergeTask(char alpha, GetFilePath path, List<Integer> arrayList, int num, int tempNum, int mergedTimes) {
-        task = new TempFileMerge(alpha, path, arrayList, num, tempNum, mergedTimes);
+        this.arrayList=arrayList;
         this.size = arrayList.size();
         this.alpha = alpha;
         this.mergedTimes = mergedTimes;
@@ -27,16 +28,28 @@ public class MergeTask implements Runnable {
 
     @Override
     public void run() {
-
-        while (size > 1) {
-            System.out.println("Task:" + alpha + (mergedTimes + 1));
-            size=pool.invoke(task);
-            mergedTimes++;
-//            size = new HashSet<>(path.getTempFiles().get(mergedTimes).get(alpha-'a')).size();
-//            size/=2;
-            task = new TempFileMerge(alpha, path, BigDataSort.getList(size), num, tempNum, mergedTimes);
-            pool = new ForkJoinPool();
+        Thread[] threads=new Thread[5];
+        for(int i=0;i<5;i++){
+            int from=i*500;
+            int to=(i+1)*500<arrayList.size()?(i+1)*500:arrayList.size();
+            threads[i]=new Thread(new TempFileMerge(alpha,path,arrayList.subList(from,to),num,tempNum,mergedTimes,cLock));
+            threads[i].start();
         }
+
+
+        try {
+            cLock.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        cLock=new CountDownLatch(1);
+        new Thread(new TempFileMerge(alpha,path,BigDataSort.getList(5),num,tempNum,mergedTimes+1,cLock)).start();
+        try {
+            cLock.await();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         System.out.println("Merge Task Finish:" + alpha + mergedTimes);
     }
 }
