@@ -43,7 +43,8 @@ public class MergeTask implements Runnable {
             throw new RuntimeException(e);
         }
         cLock=new CountDownLatch(1);
-        new Thread(new TempFileMerge(alpha,path,BigDataSort.getList(5),num,tempNum,mergedTimes+1,cLock)).start();
+        //输出最终文件
+        new Thread(new TempFileMerge(alpha,path,BigDataSort.getList(5),-1,-1,mergedTimes+1,cLock)).start();
         try {
             cLock.await();
         } catch (InterruptedException e) {

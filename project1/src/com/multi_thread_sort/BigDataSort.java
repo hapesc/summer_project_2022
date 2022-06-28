@@ -1,5 +1,7 @@
 package com.multi_thread_sort;
 
+import com.TCPtransmit.Transmit;
+
 import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
@@ -21,7 +23,9 @@ public class BigDataSort {
             "10.251.134.80"};
 
     public static void main(String[] args) throws IOException, InterruptedException {
-
+        System.out.println("请输入你的主机序号：");
+        Scanner in=new Scanner(System.in);
+        int clientName=in.nextInt();
         long start = System.currentTimeMillis();
         ExecutorService pools = null;
 
@@ -52,11 +56,22 @@ public class BigDataSort {
 //                        tasks[i].run();
             }
             pools.shutdown();
-            pools.awaitTermination(20,TimeUnit.MINUTES);
-            //todo 归并完将临时文件移动到result文件夹
-
-
-        System.out.println("总用时：" + (System.currentTimeMillis() - start) / 1000.0);
+            if(pools.awaitTermination(40,TimeUnit.MINUTES)){
+                //启动传输
+                new Transmit(4700,path).start();
+            }
+            //等10min
+            Thread.sleep(1000*60*10);
+            //归并
+            pools=Executors.newFixedThreadPool(2);
+            int THRESHOLD=clientName<3?4:3;
+            char[] alphas=getAlphas(clientName);
+            for(int i=0;i<THRESHOLD;i++){
+                pools.submit(new TempFileMerge(alphas[i],path,null,-1,-1,-1,null));
+            }
+            pools.shutdown();
+            pools.awaitTermination(10,TimeUnit.MINUTES);
+            System.out.println("总用时：" + (System.currentTimeMillis() - start) / (60*1000.0));
 
 
     }
@@ -65,6 +80,21 @@ public class BigDataSort {
         for(int i=0;i<size;i++)
             a.add(i);
         return a;
+    }
+    private static char[] getAlphas(int clientName){
+        char[] chars=null;
+        switch (clientName){
+            case 1:chars= new char[]{'a', 'b', 'c', 'd'};break;
+            case 2:chars=new char[]{'e','f','g','h'};break;
+            case 3:chars=new char[]{'i','j','k'};break;
+            case 4:chars=new char[]{'l','m','n'};break;
+            case 5:chars=new char[]{'o','p','q'};break;
+            case 6:chars=new char[]{'r','s','t'};break;
+            case 7:chars=new char[]{'u','v','w'};break;
+            case 8:chars=new char[]{'x','y','z'};break;
+        }
+        return chars;
+
     }
 
 }

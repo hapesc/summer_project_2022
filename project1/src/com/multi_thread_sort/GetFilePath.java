@@ -29,6 +29,10 @@ public class GetFilePath {
 
                 Files.createDirectory(tempDir);
             }
+            String outputDir = "/Users/michael-liang/Desktop/Result/";
+            if (!new File(outputDir).isDirectory()) {
+                    Files.createDirectory(Paths.get(outputDir));
+            }
             if (!new File(clientDir).isDirectory())
                 Files.createDirectory(Paths.get(clientDir));
             for (int i = 0; i < 20; i++) {
@@ -40,7 +44,7 @@ public class GetFilePath {
                 tempFiles.add(i, new ArrayList<>(26));
                 for (int j = 0; j < 26; j++) {
                     tempFiles.get(i).add(j, new ArrayList<>());
-                    String outputDir = tempPath + "Temp" + i + "/" + "result" + (char) ('a' + j) + "/";
+                    outputDir = tempPath + "Temp" + i + "/" + "result" + (char) ('a' + j) + "/";
                     //新建TempX文件夹
                     Path dir = Paths.get(outputDir);
                     File f = new File(outputDir);

@@ -16,8 +16,8 @@ public class Server {
         this.path = path;
     }
 
-    public void serverStart(int port) throws IOException {
-        this.port = port;
+    public void serverStart() throws IOException {
+
         server=new ServerSocket(port);
         Socket socket=null;
         while (true){
