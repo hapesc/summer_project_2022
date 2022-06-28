@@ -52,7 +52,7 @@ public class BigDataSort {
                         sizes[i] = 2500;
 //                        System.out.println(sizes[i]);
                         tasks[i] = new MergeTask(alpha, path, getList(sizes[i]), 1, 1, 0);
-                        pools.submit(tasks[i]);
+//                        pools.submit(tasks[i]);
 //                        tasks[i].run();
             }
             pools.shutdown();

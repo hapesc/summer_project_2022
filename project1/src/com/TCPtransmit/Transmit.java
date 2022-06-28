@@ -12,8 +12,8 @@ import java.util.HashMap;
 
 // 服务器端程序
 public class Transmit {
-    private static final HashMap<Character,String> IPmap=new HashMap<>();
-    private static final HashMap<Character,Integer> clientNames=new HashMap<>();
+    private  final HashMap<Character,String> IPmap=new HashMap<>();
+    private  final HashMap<Character,Integer> clientNames=new HashMap<>();
     private GetFilePath path;
     private int port;
     public static final String[] IPadress={"",
@@ -41,19 +41,36 @@ public class Transmit {
         }
 
     }
+    public static void main(String[] args) throws IOException {
+        Server ss=new Server(4700,GetFilePath.getFilePath());
+        ss.serverStart();
+    }
     public void start(){
         //todo 为文件传输写一个启动方法
-        Server ss=new Server(port,path);
-        try {
-            ss.serverStart();
-        }catch (IOException e){
-            e.printStackTrace();
+    new Thread(new Runnable() {
+        @Override
+        public void run() {
+            Server ss=new Server(port,path);
+            try {
+                ss.serverStart();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
+    }).start();
 //        for(int i=0;i<26;i++){
 //            char alpha=(char)('a'+i);
 //            int clientName=(Integer)clientNames.get(alpha);
-//            new Thread(new Client(IPmap.get(alpha), port,alpha,clientName,path)).start();
+//            new Thread(new Client(IPmap.get(alpha), port,alpha,String.valueOf(clientName),path)).start();
 //        }
+    }
+
+    public HashMap<Character, String> getIPmap() {
+        return IPmap;
+    }
+
+    public HashMap<Character, Integer> getClientNames() {
+        return clientNames;
     }
 }
 

@@ -10,10 +10,10 @@ public class Client implements Runnable{
     private String IP;
     private int port;
     private char alpha;
-    private int clientName;
+    private String clientName;
     private GetFilePath path;
 
-    public Client(String IP, int port, char alpha, int clientName,GetFilePath path) {
+    public Client(String IP, int port, char alpha, String clientName,GetFilePath path) {
         this.IP = IP;
         this.port = port;
         this.alpha = alpha;

@@ -9,7 +9,7 @@ public class SeverThread implements Runnable {
     private Socket socket;
     private InputStream in;
     private char alpha;
-    private int clientName;
+    private String clientName;
     private GetFilePath path;
 
     public SeverThread(Socket socket,GetFilePath path) {
@@ -27,15 +27,18 @@ public class SeverThread implements Runnable {
             in = socket.getInputStream();
             inr = new InputStreamReader(in);
             bfr = new BufferedReader(inr);
-            this.clientName = Integer.valueOf(bfr.readLine());
             this.alpha = bfr.readLine().charAt(0);
+            this.clientName = bfr.readLine();
             System.out.println("连接已建立：client" + clientName);
-            System.out.println("即将传输result" + alpha);
-            String outputPath = path.getClientPath(alpha, clientName);
+            System.out.println("即将传输result" + alpha+clientName);
+            String outputPath = path.getClientPath(alpha, Integer.parseInt(clientName));
             FileWriter out = new FileWriter(outputPath);
             while ((line = bfr.readLine()) != null) {
+                if(line=="complete")
+                    break;
                 out.write(line + '\n');
             }
+            System.out.println("complete");
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
