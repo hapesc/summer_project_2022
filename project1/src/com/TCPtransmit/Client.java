@@ -4,7 +4,9 @@ import com.multi_thread_sort.GetFilePath;
 
 import java.io.*;
 import java.net.Socket;
-
+/**
+ * 实现了Runnable接口，每个线程负责传输一个文件
+ */
 public class Client implements Runnable{
     private Socket client=null;
     private String IP;
@@ -20,6 +22,7 @@ public class Client implements Runnable{
         this.clientName = clientName;
         this.path=path;
     }
+
 
     @Override
     public void run() {

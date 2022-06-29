@@ -45,8 +45,12 @@ public class Transmit {
         Server ss=new Server(4700,GetFilePath.getFilePath());
         ss.serverStart();
     }
+
+    /**
+     * 负责每一台主机接收文件和传输文件的任务
+     */
     public void start(){
-        //todo 为文件传输写一个启动方法
+
     new Thread(new Runnable() {
         @Override
         public void run() {
@@ -58,11 +62,11 @@ public class Transmit {
             }
         }
     }).start();
-//        for(int i=0;i<26;i++){
-//            char alpha=(char)('a'+i);
-//            int clientName=(Integer)clientNames.get(alpha);
-//            new Thread(new Client(IPmap.get(alpha), port,alpha,String.valueOf(clientName),path)).start();
-//        }
+        for(int i=0;i<26;i++){
+            char alpha=(char)('a'+i);
+            int clientName=(Integer)clientNames.get(alpha);
+            new Thread(new Client(IPmap.get(alpha), port,alpha,String.valueOf(clientName),path)).start();
+        }
     }
 
     public HashMap<Character, String> getIPmap() {

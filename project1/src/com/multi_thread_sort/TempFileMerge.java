@@ -14,7 +14,7 @@ public class TempFileMerge implements Runnable {
     private int num;
     private int mergedTimes;
     private int tempNum;
-    private int batchSize=100000;
+    private int batchSize=1000000;
     private CountDownLatch cLock;
 
     public TempFileMerge(char alpha, GetFilePath path, List<Integer> arrayList, int num, int tempNum, int mergedTimes, CountDownLatch cLock) {
@@ -34,14 +34,16 @@ public class TempFileMerge implements Runnable {
     }
 
 
-
+    /**
+     * k路归并临时文件
+     */
     private    void mergeFile( ) {
         List<Integer> fileNameList=tempFiles;
         Map<BufferedReader, String> map = new HashMap<>();
         String outputPath=path.getOutputPath(alpha,num,tempNum,mergedTimes+1);
         path.getTempFiles().get(mergedTimes+1).get(alpha-'a').add(outputPath);
         try (FileWriter writer = new FileWriter(outputPath)) {
-            if(fileNameList.size()>0)
+            if(fileNameList!=null)
             for (Integer fileName : fileNameList) {
                 BufferedReader tmpReader = new BufferedReader(new FileReader(path.getInputPath(num,fileName,mergedTimes,alpha)));
                 map.put(tmpReader, tmpReader.readLine());

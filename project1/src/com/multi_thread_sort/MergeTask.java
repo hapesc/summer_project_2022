@@ -28,10 +28,11 @@ public class MergeTask implements Runnable {
 
     @Override
     public void run() {
+        //先进行500路归并,每一个归并任务交给一个线程执行
         Thread[] threads=new Thread[5];
         for(int i=0;i<5;i++){
             int from=i*500;
-            int to=(i+1)*500<arrayList.size()?(i+1)*500:arrayList.size();
+            int to= Math.min((i + 1) * 500, arrayList.size());
             threads[i]=new Thread(new TempFileMerge(alpha,path,arrayList.subList(from,to),num,tempNum,mergedTimes,cLock));
             threads[i].start();
         }
@@ -43,7 +44,7 @@ public class MergeTask implements Runnable {
             throw new RuntimeException(e);
         }
         cLock=new CountDownLatch(1);
-        //输出最终文件
+        //然后进行5路归并
         new Thread(new TempFileMerge(alpha,path,BigDataSort.getList(5),-1,-1,mergedTimes+1,cLock)).start();
         try {
             cLock.await();

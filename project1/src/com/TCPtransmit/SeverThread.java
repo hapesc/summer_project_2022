@@ -5,6 +5,9 @@ import com.multi_thread_sort.GetFilePath;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * 实现Runnable结果，专门用来接收文件
+ */
 public class SeverThread implements Runnable {
     private Socket socket;
     private InputStream in;

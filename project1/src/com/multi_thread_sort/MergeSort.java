@@ -2,7 +2,7 @@ package com.multi_thread_sort;
 
 public class MergeSort {
     /**
-     * 改成三路归并
+     * 二路归并
      *
      * @param arrayLeft
      * @param arrayRight
@@ -25,6 +25,14 @@ public class MergeSort {
         }
         return result;
     }
+
+    /**
+     * 三路归并
+     * @param arrayLeft
+     * @param arrayMid
+     * @param arrayRight
+     * @return
+     */
     public static String[] merge3way(String[] arrayLeft, String[] arrayMid, String[] arrayRight) {
         String[] destArray = new String[arrayLeft.length + arrayMid.length + arrayRight.length];
         int i = 0, j = 0, k = 0, l = 0;

@@ -8,10 +8,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class GetFilePath {
-    //单例设计模式
+
 
     //临时文件总文件夹路径
     private final static String tempPath = "/Users/michael-liang/Desktop/IO_Test/Temp/";
+    //从其他主机接收的文件的总文件夹
     private final static String clientDir = "/Users/michael-liang/Desktop/Result/FromClient/";
     //各级临时文件的文件夹路径
     private ArrayList<ArrayList<ArrayList<String>>> tempFiles = new ArrayList<>();
@@ -22,7 +23,7 @@ public class GetFilePath {
 
 
     private GetFilePath() {
-        //  创建临时文件总文件夹
+        //  创建各个文件夹以及初始化各个ArrayList
         try {
             Path tempDir = Paths.get(tempPath);
             if (!new File(tempPath).isDirectory()) {
@@ -57,18 +58,21 @@ public class GetFilePath {
             throw new RuntimeException(e);
 
         }
-        //创建客户端文件夹
 
     }
-
+    //单例设计模式
     private static GetFilePath path = new GetFilePath();
 
+    /**
+     * 获取实例
+     * @return
+     */
     public static GetFilePath getFilePath() {
         return path;
     }
 
     /**
-     * 获得"dataXX.txt"或"resultaTempX0.txt"的文件地址
+     * 获得"data01.txt"或"a/num.txt"临时文件的文件地址
      *
      * @param num         源文件序号
      * @param tempNum     -1代表源文件，大于0代表临时文件序号
@@ -133,13 +137,23 @@ public class GetFilePath {
         return a;
     }
 
-    //server从client接收到字符以后，要写入的文件路径
+    /**
+     * server从client接收到字符以后，要写入的文件路径
+     * @param alpha
+     * @param clientName
+     * @return
+     */
     public String getClientPath(char alpha, int clientName) {
 
         return clientDir+alpha + clientName + ".txt";
     }
 
-    //待传输的文件的文件路径
+    /**
+     * 待传输的文件的文件路径
+     * @param alpha
+     * @param clientName
+     * @return
+     */
     public String getTransmitPath(char alpha, int clientName) {
 
         return getOutputPath(alpha,-1,-1,0);

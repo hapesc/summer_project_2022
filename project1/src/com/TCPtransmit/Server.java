@@ -16,6 +16,10 @@ public class Server {
         this.path = path;
     }
 
+    /**
+     * 开始监听对应接口，每建立一个连接就开启一个线程，负责与client的专门连接
+     * @throws IOException
+     */
     public void serverStart() throws IOException {
 
         server=new ServerSocket(port);
