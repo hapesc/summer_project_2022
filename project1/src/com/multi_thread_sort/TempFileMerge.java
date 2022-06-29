@@ -41,7 +41,7 @@ public class TempFileMerge implements Runnable {
         String outputPath=path.getOutputPath(alpha,num,tempNum,mergedTimes+1);
         path.getTempFiles().get(mergedTimes+1).get(alpha-'a').add(outputPath);
         try (FileWriter writer = new FileWriter(outputPath)) {
-            if(fileNameList.size()>0)
+            if(fileNameList!=null)
             for (Integer fileName : fileNameList) {
                 BufferedReader tmpReader = new BufferedReader(new FileReader(path.getInputPath(num,fileName,mergedTimes,alpha)));
                 map.put(tmpReader, tmpReader.readLine());

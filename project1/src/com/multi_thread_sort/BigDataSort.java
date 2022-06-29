@@ -62,8 +62,9 @@ public class BigDataSort {
             if(pools.awaitTermination(40,TimeUnit.MINUTES)){
                 new Transmit(4700,path).start();
             }
-            //等10min
-            Thread.sleep(1000*60*10);
+            //等5min
+            Thread.sleep(1000*60*5);
+            System.out.println("final merge start");
             //归并
             pools=Executors.newFixedThreadPool(2);
             int THRESHOLD=clientName<3?4:3;
