@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class BigDataSort {
-    static GetFilePath path = GetFilePath.getFilePath();
+    static GetFilePath path =GetFilePath.getFilePath();
     public static final String[] IPadress={"",
             "10.251.134.43",
             "10.251.134.44",
@@ -29,6 +29,7 @@ public class BigDataSort {
         System.out.println("请输入你的主机序号：");
         Scanner in=new Scanner(System.in);
         int clientName=in.nextInt();
+        path.setHostName(clientName);
         long start = System.currentTimeMillis();
         ExecutorService pools = null;
 

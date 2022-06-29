@@ -24,6 +24,8 @@ public class GetFilePath {
     private GetFilePath() {
         //  创建临时文件总文件夹
         try {
+
+
             Path tempDir = Paths.get(tempPath);
             if (!new File(tempPath).isDirectory()) {
 
@@ -150,5 +152,14 @@ public class GetFilePath {
     public String getTransmitPath(char alpha, int clientName) {
 
         return getOutputPath(alpha,-1,-1,0);
+    }
+    public String getFinalOutPath(char alpha,int hostName){
+        return "D:/c1g2m"+hostName+"/result"+alpha+".txt";
+    }
+    public void setHostName(int hostName) throws IOException {
+        Path finalOutDir=Paths.get("D:/c1g1m"+hostName+"/");
+        if(!new File("D:/c1g1m"+hostName+"/").isDirectory()){
+            Files.createDirectory(finalOutDir);
+        }
     }
 }
